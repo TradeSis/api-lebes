@@ -1,5 +1,6 @@
 
 def input  parameter vlcentrada as longchar.
+def input param vtmp       as char.
 
 def var vlcsaida   as longchar.
 def var vsaida as char.
