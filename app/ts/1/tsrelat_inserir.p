@@ -27,6 +27,7 @@ def temp-table ttentrada no-undo serialize-name "tsrelat"
     field REMOTE_ADDR as char.
 
 def temp-table tttsrelat  no-undo serialize-name "relatorios"
+    field IDRelat   as int64
     field usercod   as char    
     field dtinclu   as date format "99/99/9999"
     field hrinclu   as char
@@ -59,8 +60,13 @@ end.
 def var lcjsonentrada as longchar.
 lcjsonentrada = ttentrada.parametrosJSON.
 /* message "MESSAGE" string(lcjsonentrada). */
+def var vidRelat as int64.
 
+    find last tsrelat no-lock no-error.
+    vidRelat = if not avail tsrelat then 1 else tsrelat.idRelat + 1. 
+do transaction:    
     create tsrelat.
+    tsrelat.idRelat = vidRelat.
     tsrelat.progcod  = ttentrada.progcod.
     tsrelat.usercod  = ttentrada.usercod.
     tsrelat.relatnom = ttentrada.relatnom.
@@ -68,10 +74,11 @@ lcjsonentrada = ttentrada.parametrosJSON.
     tsrelat.hrinclu  = time.
     tsrelat.REMOTE_ADDR = ttentrada.REMOTE_ADDR.    
     
-    
     copy-lob FROM lcjsonentrada to tsrelat.parametrosJSON .
+end.
 
     create tttsrelat.
+    tttsrelat.idrelat  = tsrelat.idRelat. 
     tttsrelat.progcod  = tsrelat.progcod.
     tttsrelat.usercod  = tsrelat.usercod.
     tttsrelat.relatnom = tsrelat.relatnom.
