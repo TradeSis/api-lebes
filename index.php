@@ -169,7 +169,7 @@ $inicioUrl = false;
 $i = 0;
 foreach ($ex as $value) {
     //echo $i . "-" . $ex[$i] . "\n";
-    if ($value == "api") {
+    if ($value == "api"||$value == "apilebes") {
         $inicioUrl = true;
         unset($ex[$i]);
       
@@ -234,6 +234,7 @@ fwrite($arquivo,$log_datahora_ini."$acao"."-jsonEntrada->".json_encode($jsonEntr
 fwrite($arquivo,$log_datahora_ini."$acao"."-metodo->".json_encode($metodo)."\n");   
 fclose($arquivo);
 **/
+
 
 /*
 echo 'host='.$_SERVER['SERVER_ADDR']."\n";
