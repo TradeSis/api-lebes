@@ -2,7 +2,12 @@
 // helio 03022023 adaptacao para lojas/prevenda
 // helio 03022023 alterado nome de consultar.php para produtos.php
 // helio 26012023 18:10
-  
+$log_datahora_ini = date("dmYHis");
+$acao="produtos"; 
+$arqlog = defineCaminhoLog()."apilebes_".$acao."_".date("dmY").".log";
+$arquivo = fopen($arqlog,"a");
+fwrite($arquivo,$log_datahora_ini."$acao"."-PARAMETRO->".$parametro."\n");   
+
   $codigoProduto = htmlspecialchars($parametro);
   $regs = 0;
   $produtos = array();
