@@ -254,8 +254,8 @@ switch ($aplicacao) {
         include "app/ts/versao.php";
         break;
 
-    case "services":
-        include "app/services/versao.php";
+    case "relatorios":
+        include "app/relatorios/versao.php";
         break;
 
 
