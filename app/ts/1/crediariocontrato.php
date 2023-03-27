@@ -1,7 +1,7 @@
 <?php
 $log_datahora_ini = date("dmYHis");
 $acao="crediariocontrato"; 
-$arqlog = defineCaminhoLog()."apits_".$acao."_".date("dmY").".log";
+$arqlog = defineCaminhoLog()."apilebes_".$acao."_".date("dmY").".log";
 $arquivo = fopen($arqlog,"a");
 fwrite($arquivo,$log_datahora_ini."$acao"."-ENTRADA->".json_encode($jsonEntrada)."\n");   
 
