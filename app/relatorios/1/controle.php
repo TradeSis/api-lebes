@@ -1,42 +1,15 @@
 <?php
-// helio 22022023 - incluido crediario/cliente e crediario/contrato
-// helio 17022023 - incluido consultaMargemDesconto - é fake
-// helio 03022023 - adaptacao de produto para produtos
-// helio 03022023 - seguros
 
 //echo "metodo=".$metodo."\n";
 //echo "funcao=".$funcao."\n";
 //echo "parametro=".$parametro."\n";
 
 if ($metodo=="GET"){
-  if ($funcao=="crediario"&&$parametro=="cliente") {
-    $funcao = "crediario/cliente";
-    $parametro = null;
-  }
-  if ($funcao=="crediario"&&$parametro=="contrato") {
-    $funcao = "crediario/contrato";
-    $parametro = null;
-  }
 
     switch ($funcao) {
-      case "produtos":
-        include 'produtos.php';
+      case "listagem":
+        include 'tsrelat.php';
       break;
-      case "seguros":
-        include 'seguros.php';
-      break;
-      case "consultaMargemDesconto":
-        include 'consultaMargemDesconto.php';
-      break;
-      case "crediario/cliente":
-        include 'crediariocliente.php';
-      break;
-      case "crediario/contrato":
-        include 'crediariocontrato.php';
-      break;
-
-      
-
       default:
         $jsonSaida = json_decode(json_encode(
         array("status" => "400",
@@ -48,6 +21,10 @@ if ($metodo=="GET"){
 
  if ($metodo=="PUT"){
     switch ($funcao) {
+      case "inserir":
+        include 'tsrelat_inserir.php';
+      break;
+
       default:
         $jsonSaida = json_decode(json_encode(
         array("status" => "400",

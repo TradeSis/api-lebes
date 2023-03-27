@@ -1,18 +1,18 @@
 <?php
-// Inicio
 $log_datahora_ini = date("dmYHis");
-$acao="tsrelat";  
-$arqlog = "/home/tsplaces/tmp/apilog/apits_".date("dmY").".log";
+$acao="relatorios"; 
+$arqlog = defineCaminhoLog()."apilebes_".$acao."_".date("dmY").".log";
 $arquivo = fopen($arqlog,"a");
+$identificacao = $log_datahora_ini."$acao";
+fwrite($arquivo,$identificacao."-ENTRADA->".json_encode($jsonEntrada)."\n");   
 
-fwrite($arquivo,$log_datahora_ini."$acao"."-ENTRADA->".json_encode($jsonEntrada)."\n");   $log_datahora_ini = date("dmYHis");
 
 $conteudoEntrada=json_encode($jsonEntrada);
 
 
 
     $progr = new chamaprogress();
-    $retorno = $progr->executarprogress("ts/1/tsrelat",$conteudoEntrada);
+    $retorno = $progr->executarprogress("relatorios/1/tsrelat",$conteudoEntrada);
 
     $jsonSaida = json_decode($retorno,true);
     

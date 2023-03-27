@@ -1,5 +1,6 @@
 
 def input  parameter vlcentrada as longchar.
+def input param vtmp       as char.
 
 def var vlcsaida   as longchar.
 def var vsaida as char.
@@ -22,10 +23,11 @@ def temp-table ttentrada no-undo serialize-name "tsrelat"
     field usercod as char
     field progcod as char
     field relatnom as char
-    field parametrosJSON as char serialize-name "parametros"
+    field parametrosJSON as char 
     field REMOTE_ADDR as char.
 
 def temp-table tttsrelat  no-undo serialize-name "relatorios"
+    field IDRelat   as int64
     field usercod   as char    
     field dtinclu   as date format "99/99/9999"
     field hrinclu   as char
@@ -33,7 +35,7 @@ def temp-table tttsrelat  no-undo serialize-name "relatorios"
     field relatnom  as char
     field nomeArquivo  as char
     field REMOTE_ADDR as char
-    field parametrosJSON as char serialize-name "parametros".
+    field parametrosJSON as char.
 
 def temp-table ttsaida  no-undo serialize-name "conteudoSaida"
     field tstatus        as int serialize-name "status"
@@ -55,11 +57,21 @@ then do:
     message string(vlcSaida).
     return.
 end.
-def var lcjsonentrada as longchar.
-lcjsonentrada = ttentrada.parametrosJSON.
-/* message "MESSAGE" string(lcjsonentrada). */
 
+def var lcjsonentrada as longchar.
+lcjsonentrada =  "\{\"parametros\": [" + ttentrada.parametrosJSON + "] \}".
+
+/*put unformatted string(lcjsonentrada).
+  message "MESSAGE" string(lcjsonentrada). 
+*/
+
+def var vidRelat as int64.
+
+    find last tsrelat no-lock no-error.
+    vidRelat = if not avail tsrelat then 1 else tsrelat.idRelat + 1. 
+do transaction:    
     create tsrelat.
+    tsrelat.idRelat = vidRelat.
     tsrelat.progcod  = ttentrada.progcod.
     tsrelat.usercod  = ttentrada.usercod.
     tsrelat.relatnom = ttentrada.relatnom.
@@ -67,20 +79,22 @@ lcjsonentrada = ttentrada.parametrosJSON.
     tsrelat.hrinclu  = time.
     tsrelat.REMOTE_ADDR = ttentrada.REMOTE_ADDR.    
     
-    
     copy-lob FROM lcjsonentrada to tsrelat.parametrosJSON .
+end.
 
     create tttsrelat.
+    tttsrelat.idrelat  = tsrelat.idRelat. 
     tttsrelat.progcod  = tsrelat.progcod.
     tttsrelat.usercod  = tsrelat.usercod.
     tttsrelat.relatnom = tsrelat.relatnom.
     tttsrelat.dtinclu  = tsrelat.dtinclu.
     tttsrelat.hrinclu  = string(tsrelat.hrinclu,"HH:MM:SS").
     tttsrelat.REMOTE_ADDR = tsrelat.REMOTE_ADDR.
-    tttsrelat.parametrosJSON = ttentrada.parametrosJSON.
+    tttsrelat.parametrosJSON = lcjsonentrada /*tsrelat.parametrosJSON*/ .
 
 hsaida  = temp-table tttsrelat:handle.
 
 lokJson = hsaida:WRITE-JSON("LONGCHAR", vlcSaida, TRUE).
 
 put unformatted string(vlcSaida).
+

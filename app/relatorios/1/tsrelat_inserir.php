@@ -1,11 +1,11 @@
 <?php
 // Inicio
 $log_datahora_ini = date("dmYHis");
-$acao="tsrelat_inserir";  
-$arqlog = "/home/tsplaces/tmp/apilog/apits_".date("dmY").".log";
+$acao="inserir"; 
+$arqlog = defineCaminhoLog()."apilebes_relatorios_".date("dmY").".log";
 $arquivo = fopen($arqlog,"a");
-
-fwrite($arquivo,$log_datahora_ini."$acao"."-ENTRADA->".json_encode($jsonEntrada)."\n");   $log_datahora_ini = date("dmYHis");
+$identificacao = $log_datahora_ini.$acao;
+fwrite($arquivo,$identificacao."-ENTRADA->".json_encode($jsonEntrada)."\n");   
 
 
     $conteudoEntrada=json_encode($jsonEntrada);
@@ -17,8 +17,8 @@ fwrite($arquivo,$log_datahora_ini."$acao"."-ENTRADA->".json_encode($jsonEntrada)
     }
 */
 if (!isset($dadosEntrada["tsrelat"])) {
-    $parametrosJSON = array('parametros' 
-            => array($jsonEntrada["parametros"]));
+    $parametrosJSON = /*array('parametros' 
+            => array(*/ $jsonEntrada["parametros"] /*))*/;
 
     $conteudoEntrada = json_encode(
         array(
@@ -27,18 +27,20 @@ if (!isset($dadosEntrada["tsrelat"])) {
                   array('usercod' =>  $jsonEntrada["usercod"], 
                         'progcod' =>  $jsonEntrada["progcod"],             
                         'relatnom' =>  $jsonEntrada["relatnom"],                                     
-                        'parametros' =>  json_encode($parametrosJSON),   
-                        'REMOTE_ADDR' =>  $_SERVER['REMOTE_ADDR']
+                        'REMOTE_ADDR' =>  $_SERVER['REMOTE_ADDR'],
+                        'parametrosJSON' =>  json_encode($parametrosJSON)                           
                   )
             )
         )
     );
 }
 
-  //echo $conteudoEntrada;
+    echo $conteudoEntrada;
+    fwrite($arquivo,$identificacao."-FORMATADO->".$conteudoEntrada."\n");   
 
     $progr = new chamaprogress();
-    $retorno = $progr->executarprogress("ts/1/tsrelat_inserir",$conteudoEntrada);
+
+    $retorno = $progr->executarprogress("relatorios/1/tsrelat_inserir",$conteudoEntrada);
 
     fwrite($arquivo,$identificacao."-PROGRESS->".json_encode($retorno)."\n");
 

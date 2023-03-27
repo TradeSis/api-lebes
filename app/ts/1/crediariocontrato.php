@@ -1,10 +1,8 @@
 <?php
-// Inicio
 $log_datahora_ini = date("dmYHis");
-$acao="crediariocontrato";  
-$arqlog = "/home/tsplaces/tmp/apilog/apits_".date("dmY").".log";
+$acao="crediariocontrato"; 
+$arqlog = defineCaminhoLog()."apilebes_".$acao."_".date("dmY").".log";
 $arquivo = fopen($arqlog,"a");
-
 fwrite($arquivo,$log_datahora_ini."$acao"."-ENTRADA->".json_encode($jsonEntrada)."\n");   
 
 $conteudoEntrada = json_encode($jsonEntrada);
