@@ -7,7 +7,7 @@
 if ($metodo=="GET"){
 
     switch ($funcao) {
-      case "relatorios":
+      case "listagem":
         include 'tsrelat.php';
       break;
       default:
@@ -21,7 +21,7 @@ if ($metodo=="GET"){
 
  if ($metodo=="PUT"){
     switch ($funcao) {
-      case "relatorios":
+      case "inserir":
         include 'tsrelat_inserir.php';
       break;
 
