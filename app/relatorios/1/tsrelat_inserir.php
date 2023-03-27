@@ -17,8 +17,8 @@ fwrite($arquivo,$identificacao."-ENTRADA->".json_encode($jsonEntrada)."\n");
     }
 */
 if (!isset($dadosEntrada["tsrelat"])) {
-    $parametrosJSON = array('parametros' 
-            => array($jsonEntrada["parametros"]));
+    $parametrosJSON = /*array('parametros' 
+            => array(*/ $jsonEntrada["parametros"] /*))*/;
 
     $conteudoEntrada = json_encode(
         array(
@@ -27,17 +27,19 @@ if (!isset($dadosEntrada["tsrelat"])) {
                   array('usercod' =>  $jsonEntrada["usercod"], 
                         'progcod' =>  $jsonEntrada["progcod"],             
                         'relatnom' =>  $jsonEntrada["relatnom"],                                     
-                        'parametros' =>  json_encode($parametrosJSON),   
-                        'REMOTE_ADDR' =>  $_SERVER['REMOTE_ADDR']
+                        'REMOTE_ADDR' =>  $_SERVER['REMOTE_ADDR'],
+                        'parametrosJSON' =>  json_encode($parametrosJSON)                           
                   )
             )
         )
     );
 }
 
-  //echo $conteudoEntrada;
+    echo $conteudoEntrada;
+    fwrite($arquivo,$identificacao."-FORMATADO->".$conteudoEntrada."\n");   
 
     $progr = new chamaprogress();
+
     $retorno = $progr->executarprogress("relatorios/1/tsrelat_inserir",$conteudoEntrada);
 
     fwrite($arquivo,$identificacao."-PROGRESS->".json_encode($retorno)."\n");

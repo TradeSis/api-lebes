@@ -23,7 +23,7 @@ def temp-table ttentrada no-undo serialize-name "tsrelat"
     field usercod as char
     field progcod as char
     field relatnom as char
-    field parametrosJSON as char serialize-name "parametros"
+    field parametrosJSON as char 
     field REMOTE_ADDR as char.
 
 def temp-table tttsrelat  no-undo serialize-name "relatorios"
@@ -35,7 +35,7 @@ def temp-table tttsrelat  no-undo serialize-name "relatorios"
     field relatnom  as char
     field nomeArquivo  as char
     field REMOTE_ADDR as char
-    field parametrosJSON as char serialize-name "parametros".
+    field parametrosJSON as char.
 
 def temp-table ttsaida  no-undo serialize-name "conteudoSaida"
     field tstatus        as int serialize-name "status"
@@ -57,9 +57,14 @@ then do:
     message string(vlcSaida).
     return.
 end.
+
 def var lcjsonentrada as longchar.
-lcjsonentrada = ttentrada.parametrosJSON.
-/* message "MESSAGE" string(lcjsonentrada). */
+lcjsonentrada =  "\{\"parametros\": [" + ttentrada.parametrosJSON + "] \}".
+
+/*put unformatted string(lcjsonentrada).
+  message "MESSAGE" string(lcjsonentrada). 
+*/
+
 def var vidRelat as int64.
 
     find last tsrelat no-lock no-error.
@@ -85,10 +90,11 @@ end.
     tttsrelat.dtinclu  = tsrelat.dtinclu.
     tttsrelat.hrinclu  = string(tsrelat.hrinclu,"HH:MM:SS").
     tttsrelat.REMOTE_ADDR = tsrelat.REMOTE_ADDR.
-    tttsrelat.parametrosJSON = ttentrada.parametrosJSON.
+    tttsrelat.parametrosJSON = lcjsonentrada /*tsrelat.parametrosJSON*/ .
 
 hsaida  = temp-table tttsrelat:handle.
 
 lokJson = hsaida:WRITE-JSON("LONGCHAR", vlcSaida, TRUE).
 
 put unformatted string(vlcSaida).
+
