@@ -35,6 +35,9 @@ if ($metodo=="GET"){
         include 'crediariocontrato.php';
       break;
 
+      case "cupomcashback":
+        include 'cupomcashbackcliente.php';
+      break;
       
 
       default:
