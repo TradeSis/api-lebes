@@ -17,24 +17,6 @@ fwrite($arquivo,$log_datahora_ini."$acao"."-PARAMETRO->".$parametro."\n");
                         "previsao" => null);
 
   if (!empty($codigoProduto)) {
-    if ($codigoProduto == 211) {
-        array_push($produtos,$produto);
-        $regs .= 1;
-    }
-  } else {
-      array_push($produtos,$produto);
-      $regs .= 1;      
-  }
-
-
-  $produto = array(     "procod" => 211,
-                        "pronom" => "FOGAO LENHA 1",
-                        "estoqueFilial" => "0",
-                        "disponivelDep" => "104",
-                        "pedCompra" => "0",
-                        "previsao" => null);
-
-  if (!empty($codigoProduto)) {
     if ($codigoProduto == 210) {
         array_push($produtos,$produto);
         $regs .= 1;        
