@@ -8,10 +8,9 @@ def var vsaida as char.
 def var lokjson as log.
 def var hentrada as handle.
 def var hsaida   as handle.
-/* 
-def temp-table ttentrada no-undo serialize-name "produtos"
-    field produto as int.
-*/
+def temp-table ttentrada no-undo serialize-name "entrada"
+    field progcod   as char
+    field usercod   as char.
 
 def temp-table tttsrelat  no-undo serialize-name "relatorios"
     field IDRelat   as int64
@@ -25,13 +24,17 @@ def temp-table tttsrelat  no-undo serialize-name "relatorios"
     field parametrosJSON as char serialize-name "parametros".
 
     
-/* 
+ 
 hEntrada = temp-table ttentrada:HANDLE.
 lokJSON = hentrada:READ-JSON("longchar",vlcentrada, "EMPTY").
 find first ttentrada.
-*/
+
 def var lcjsonentrada as longchar.
-for each tsrelat no-lock.
+for each tsrelat where tsrelat.progcod = ttentrada.progcod no-lock.
+    if ttentrada.usercod <> ?
+    then if ttentrada.usercod <> tsrelat.usercod
+         then next.
+         
     create tttsrelat.
     tttsrelat.idRelat  = tsrelat.idRelat. 
     tttsrelat.progcod  = tsrelat.progcod.

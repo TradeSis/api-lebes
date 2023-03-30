@@ -27,7 +27,7 @@ if (!isset($dadosEntrada["tsrelat"])) {
                   array('usercod' =>  $jsonEntrada["usercod"], 
                         'progcod' =>  $jsonEntrada["progcod"],             
                         'relatnom' =>  $jsonEntrada["relatnom"],                                     
-                        'REMOTE_ADDR' =>  $_SERVER['REMOTE_ADDR'],
+                        'REMOTE_ADDR' =>  $jsonEntrada["remote_addr"],
                         'parametrosJSON' =>  json_encode($parametrosJSON)                           
                   )
             )
