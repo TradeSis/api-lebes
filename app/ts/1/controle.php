@@ -38,6 +38,12 @@ if ($metodo=="GET"){
       case "cupomcashback":
         include 'cupomcashbackcliente.php';
       break;
+      case "consultabonuscliente":
+        include 'consultabonuscliente.php';
+      break;
+      case "consultaprodutodisp":
+        include 'consultaprodutodisp.php';
+      break;
       
 
       default:
