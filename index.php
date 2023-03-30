@@ -258,6 +258,10 @@ switch ($aplicacao) {
         include "app/relatorios/versao.php";
         break;
 
+    case "clientes": // helio 28032023
+        include "app/clientes/versao.php";
+        break;
+    
 
     default:
         $jsonSaida = json_decode(
@@ -310,5 +314,5 @@ if ($log == "true") {
 
     }
 }
-
+//teste
 ?>
