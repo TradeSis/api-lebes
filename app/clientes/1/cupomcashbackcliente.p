@@ -13,14 +13,16 @@ def var hsaida   as handle.
     "cliente": [
         {
             "codigoCliente": 1513,
-            "cpfCNPJ": ""
+            "cpfCNPJ": "",
+            "situacao" "TODOS" // "ABERTOS"
         }
     ]
 }
 */
 def temp-table ttentrada no-undo serialize-name "cliente"
     field codigoCliente as int
-    field cpfCNPJ       as char.
+    field cpfCNPJ       as char
+    field situacao      as char.
 
 def temp-table ttcliente  no-undo serialize-name "cliente"
     field codigoCliente   as int    
@@ -34,7 +36,7 @@ def temp-table ttcupom  no-undo serialize-name "cupom"
     field dataValidade   as date format "99/99/9999"
     field valorCupom   as dec
     field percCupom  as dec
-    field dataUtilizacao  as date format "99/99/9999"
+    field dataUtilizacao  as date format "99/99/9999".
 
 def dataset conteudoSaida for ttcliente, ttcupom.
 
@@ -77,59 +79,48 @@ then do:
     return.
 end.
 
+if ttentrada.situacao = "" then ttentrada.situacao = "TODOS".
 create ttcliente.
 ttcliente.codigoCliente = clien.clicod.
 ttcliente.cpfCNPJ       = clien.ciccgc.
 ttcliente.nomeCliente   = clien.clinom. 
 
-for each contrato where contrato.clicod = clien.clicod no-lock.
-
-    create tthistorico.
-    tthistorico.codigoCliente    = contrato.clicod.
-    tthistorico.numeroContrato   = contrato.contnum.
-    tthistorico.dtemissao        = contrato.dtinicial.
-    tthistorico.dtProxVencimento = ?.
-    tthistorico.valorTotal       = trim(string(contrato.vltotal,"->>>>>>>>>>>>>>>>>>9.99")).
-    tthistorico.valorAberto      = "".
-    tthistorico.valorVencido     = "".
-    tthistorico.valorEntrada     = trim(string(contrato.vlentra,"->>>>>>>>>>>>>>>>>>9.99")).
-    tthistorico.situacao         = "".
-
-    vvalorAberto = 0.
-    vvalorVencido = 0.
-    for each titulo where titulo.empcod = 19 and titulo.titnat = no and
-        titulo.etbcod = contrato.etbcod and
-        titulo.modcod = contrato.modcod and
-        titulo.clifor = contrato.clicod and
-        titulo.titnum = string(contrato.contnum)
-        no-lock.
-        if titulo.titsit = "LIB"
-        then do:
-            vvalorAberto = vvalorAberto + titulo.titvlcob.
-            if tthistorico.situacao = ""
-            then tthistorico.situacao = "LIB".
-            if titulo.titdtven < today
-            then do:
-                vvalorVencido = vvalorVencido + titulo.titvlcob.
-                tthistorico.situacao = "ATR".
-            end.
-            if tthistorico.dtProxVencimento = ? 
-            then tthistorico.dtProxVencimento = titulo.titdtven.
-            else tthistorico.dtProxVencimento = min(tthistorico.dtProxVencimento,titulo.titdtven).
+    if ttentrada.situacao = "ABERTOS"
+    then do:
+        for each cupomb2b where 
+            cupomb2b.tipocupom = "CASHB" and cupomb2b.clicod = clien.clicod and cupomb2b.dataTransacao = ?  no-lock.
+            run penviacupom.
         end.
     end.
-    tthistorico.valorAberto       = trim(string(vvalorAberto,"->>>>>>>>>>>>>>>>>>9.99")).
-    tthistorico.valorVencido      = trim(string(vvalorVencido,"->>>>>>>>>>>>>>>>>>9.99")).
-
-    if tthistorico.situacao = ""
-    then   tthistorico.situacao         = "PAG".
+    if ttentrada.situacao = "USADOS"
+    then do:
+        for each cupomb2b where  
+                cupomb2b.tipocupom = "CASHB" and cupomb2b.clicod = clien.clicod and cupomb2b.dataTransacao <> ? 
+            no-lock.
+            run penviacupom.
+        end.
+    end.
     
-    if ttentrada.situacao = "LIB" 
-    then if tthistorico.situacao = "PAG" then delete tthistorico.
-    if ttentrada.situacao = "PAG" 
-    then if tthistorico.situacao <> "PAG" then delete tthistorico.
-end.
+    if ttentrada.situacao = "TODOS"
+    then do:
+        for each cupomb2b where cupomb2b.tipocupom = "CASHB" and cupomb2b.clicod = clien.clicod   no-lock.
+            run penviacupom.
+        end.
+    end.
 
+
+procedure penviacupom.
+
+    create ttcupom.
+    ttcupom.codigoCliente   = cupomb2b.clicod.
+    ttcupom.idCupom         = cupomb2b.idcupom.
+    ttcupom.dataGeracao     = cupomb2b.dataCriacao.    
+    ttcupom.dataValidade    = cupomb2b.dataValidade.
+    ttcupom.valorCupom      = cupomb2b.valorDesconto.
+    ttcupom.percCupom       = cupomb2b.percentualDesconto.
+    ttcupom.dataUtilizacao  = dataTransacao.
+
+end procedure.
 
 hsaida  = dataset conteudoSaida:handle.
 
@@ -146,7 +137,7 @@ END.
 INPUT CLOSE.
 
 
-varquivo  = vtmp + "apits_crediariocliente" + string(today,"999999") + replace(string(time,"HH:MM:SS"),":","") +
+varquivo  = vtmp + "apilebes_clientes_cupomcashbackcliente" + string(today,"999999") + replace(string(time,"HH:MM:SS"),":","") +
           trim(ppid) + ".json".
 
 lokJson = hsaida:WRITE-JSON("FILE", varquivo, TRUE).
