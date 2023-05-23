@@ -27,7 +27,7 @@ if (!isset($dadosEntrada["tsrelat"])) {
                   array('usercod' =>  $jsonEntrada["usercod"], 
                         'progcod' =>  $jsonEntrada["progcod"],             
                         'relatnom' =>  $jsonEntrada["relatnom"],                                     
-                        'REMOTE_ADDR' =>  $jsonEntrada["remote_addr"],
+                        'REMOTE_ADDR' =>   $jsonEntrada["REMOTE_ADDR"],
                         'parametrosJSON' =>  json_encode($parametrosJSON)                           
                   )
             )
@@ -35,7 +35,7 @@ if (!isset($dadosEntrada["tsrelat"])) {
     );
 }
 
-    echo $conteudoEntrada;
+    //echo $conteudoEntrada;
     fwrite($arquivo,$identificacao."-FORMATADO->".$conteudoEntrada."\n");   
 
     $progr = new chamaprogress();

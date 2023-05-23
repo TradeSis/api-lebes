@@ -182,7 +182,7 @@ IMPORT unformatted ppid.
 END.
 INPUT CLOSE.
 
-varquivo  = "apits_crediariocontrato" + string(today,"999999") + replace(string(time,"HH:MM:SS"),":","") +
+varquivo  = vtmp + "apits_crediariocontrato" + string(today,"999999") + replace(string(time,"HH:MM:SS"),":","") +
           trim(ppid) + ".json".
 
 lokJson = hsaida:WRITE-JSON("FILE", varquivo, TRUE).

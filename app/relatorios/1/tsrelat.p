@@ -30,7 +30,9 @@ lokJSON = hentrada:READ-JSON("longchar",vlcentrada, "EMPTY").
 find first ttentrada.
 
 def var lcjsonentrada as longchar.
-for each tsrelat where tsrelat.progcod = ttentrada.progcod no-lock.
+for each tsrelat where tsrelat.progcod = ttentrada.progcod and 
+                       tsrelat.dtinclu >= today - 2 
+                       no-lock.
     if ttentrada.usercod <> ?
     then if ttentrada.usercod <> tsrelat.usercod
          then next.
